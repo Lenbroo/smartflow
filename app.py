@@ -145,6 +145,5 @@ if uploaded_file:
 # ---------- Footer ----------
 st.markdown("""
 ---
-<sub>Made with ❤️</sub><br>
-<sub>All rights reserved to Khaled Abdelhamid</sub>
+<sub>Made with ❤️ By Khaled Abdelhamid</sub>
 """, unsafe_allow_html=True)
