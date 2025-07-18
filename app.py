@@ -45,7 +45,7 @@ if uploaded_file:
 
         def get_hours(package_name):
             if not isinstance(package_name, str): return None
-            if "DNA" in package_name: return "6 Weeks"
+            if "SMART DNA" in package_name: return "6 Weeks"
             if "CONSULTATION" in package_name.upper(): return "0"
             for key in hours_dict:
                 if key in package_name:
@@ -54,9 +54,9 @@ if uploaded_file:
 
         output_df['hrs'] = output_df['package'].apply(get_hours)
 
-        # Stage 3: Pivot tables
+        # Stage 3: Pivot tables with consistent packages
         mapping = {"UAE National Pre-employment": "UAE-National Pre-Employment Test", "Wellness Package - Premium": "Premium Package", "Food Intolerance Test (Stand Alone)": "Food Intolerance", "Respiratory Allergy Test (Add On)": "Respiratory Allergy", "Body Composition Analysis Test (Add On)": "Body Composition Analysis Test (Add On)", "ECG and Doctor Consult (Stand Alone)": "ECG and Doctor Consult (Stand Alone)", "Wellness Package - Enhanced": "Enhanced Package", "Wellness Package - Standard": "Standard Package", "Lipid Profile Test (Add On with Wellness)": "Lipid Profile", "Food Allergy Test (Add On)": "Food Allergy", "Female Hormone Profile (Add On with Wellness)": "Female Hormone Profile", "Food Intolerance Test (Add On)": "Food Intolerance", "Smart DNA - Age Well Package": "Age-Well"}
-        packages = ['Standard Package', 'Enhanced Package', 'Premium Package', 'Lipid Profile', 'Food Allergy', 'Food Intolerance', 'Respiratory Allergy', 'Female Hormone Profile', 'Mag & Zinc', 'Coeliac Profile Test', 'Active Package', 'Womens Comprehensive Health Screening', 'Healthy Heart Package', 'Right Fit', 'Athletes Package', 'NutriGen', 'UAE-National Pre-Employment Test', 'Age-Well', 'Acne Profile', 'Hair Loss']
+        packages = ['Standard Package', 'Enhanced Package', 'Premium Package', 'Lipid Profile', 'Food Allergy', 'Food Intolerance', 'Respiratory Allergy', 'Female Hormone Profile', 'Mag & Zinc', 'Coeliac Profile Test', 'Active Package', 'Womens Comprehensive Health Screening', 'Healthy Heart Package', 'Right Fit', 'Athletes Package', 'NutriGen', 'UAE-National Pre-Employment Test', 'Age-Well', 'Acne Profile', 'Hair Loss', 'BCA', 'Pulmonary Function Test', 'Travel Fit Assessment', 'Movement Assessment', 'H&U Vaccination', 'Influenza Vaccination', 'Healthy Heart', 'Gym Partnership Package - Athlete Plus', 'GUT Health', 'OPC']
         locations = ['CITY WALK', 'DKP', 'INDEX']
 
         output_df['location'] = output_df['location'].str.strip().str.upper()
@@ -80,7 +80,7 @@ if uploaded_file:
 
         pivot_df = pivot_df.reindex(columns=['CITY WALK', 'INDEX', 'DKP'])
 
-        # Stage 4: Unique Patients
+        # Stage 4: Unique Patients with consistent packages
         unique_patients_pivot = pd.DataFrame(0, index=packages + ['Unique Patients'], columns=locations)
 
         def match_package(service_name):
