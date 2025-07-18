@@ -166,7 +166,7 @@ st.markdown("""
 st.markdown(
     """
     <div style="text-align: center;">
-        <img src="ss.png" width="100"/>
+        <img src="https://cdn.shopify.com/oxygen-v2/36277/27243/56770/2052185/assets/favicon-BeEK2tfQ.svg" width="100"/>
         <div style="margin-top: 10px;">
             <sub>Made with ❤️ by Khaled Abdelhamid</sub><br>
             <sub>All rights reserved to Khaled Abdelhamid</sub>
