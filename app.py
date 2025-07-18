@@ -145,6 +145,8 @@ if uploaded_file:
 # ---------- Footer ----------
 st.markdown("""
     <hr style="margin-top: 50px;">
+    <img src="ss.svg" alt="logo" width="40"/>
+    <br>
     <div style='text-align: center; font-size: small;'>
         <p>Made with ❤️ By Khaled Abdelhamid</p>
        
