@@ -147,6 +147,6 @@ st.markdown("""
     <hr style="margin-top: 50px;">
     <div style='text-align: center; font-size: small;'>
         <p>Made with ❤️ By Khaled Abdelhamid</p>
-        <p>All rights reserved to Khaled Abdelhamid</p>
+       
     </div>
 """, unsafe_allow_html=True)
