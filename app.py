@@ -145,7 +145,14 @@ if uploaded_file:
 # ---------- Footer ----------
 st.markdown("""
     <hr style="margin-top: 50px;">
-    st.image("ss.png", width=40)
+    <br>
+    <div style='text-align: center; font-size: small;'>
+       
+    </div>
+""", unsafe_allow_html=True)
+st.image("ss.png", width=40)
+st.markdown("""
+   
     <br>
     <div style='text-align: center; font-size: small;'>
         <p>Made with ❤️ By Khaled Abdelhamid</p>
