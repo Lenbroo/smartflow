@@ -55,7 +55,7 @@ if uploaded_file:
         output_df['hrs'] = output_df['package'].apply(get_hours)
 
         # Stage 3: Pivot tables (keep original packages)
-        mapping = {"UAE National Pre-employment": "UAE-National Pre-Employment Test", "Wellness Package - Premium": "Premium Package", "Food Intolerance Test (Stand Alone)": "Food Intolerance", "Respiratory Allergy Test (Add On)": "Respiratory Allergy", "Body Composition Analysis Test (Add On)": "Body Composition Analysis Test (Add On)", "ECG and Doctor Consult (Stand Alone)": "ECG and Doctor Consult (Stand Alone)", "Wellness Package - Enhanced": "Enhanced Package", "Wellness Package - Standard": "Standard Package", "Lipid Profile Test (Add On with Wellness)": "Lipid Profile", "Food Allergy Test (Add On)": "Food Allergy", "Female Hormone Profile (Add On with Wellness)": "Female Hormone Profile", "Food Intolerance Test (Add On)": "Food Intolerance", "Smart DNA - Age Well Package": "Age-Well"}
+        mapping_pivot = {"UAE National Pre-employment": "UAE-National Pre-Employment Test", "Wellness Package - Premium": "Premium Package", "Food Intolerance Test (Stand Alone)": "Food Intolerance", "Respiratory Allergy Test (Add On)": "Respiratory Allergy", "Body Composition Analysis Test (Add On)": "Body Composition Analysis Test (Add On)", "ECG and Doctor Consult (Stand Alone)": "ECG and Doctor Consult (Stand Alone)", "Wellness Package - Enhanced": "Enhanced Package", "Wellness Package - Standard": "Standard Package", "Lipid Profile Test (Add On with Wellness)": "Lipid Profile", "Food Allergy Test (Add On)": "Food Allergy", "Female Hormone Profile (Add On with Wellness)": "Female Hormone Profile", "Food Intolerance Test (Add On)": "Food Intolerance", "Smart DNA - Age Well Package": "Age-Well"}
         packages_pivot = ['Standard Package', 'Enhanced Package', 'Premium Package', 'Lipid Profile', 'Food Allergy', 'Food Intolerance', 'Respiratory Allergy', 'Female Hormone Profile', 'Mag & Zinc', 'Coeliac Profile Test', 'Active Package', 'Womens Comprehensive Health Screening', 'Healthy Heart Package', 'Right Fit', 'Athletes Package', 'NutriGen', 'UAE-National Pre-Employment Test', 'Age-Well', 'Acne Profile', 'Hair Loss']
         locations = ['CITY WALK', 'DKP', 'INDEX']
 
@@ -67,7 +67,7 @@ if uploaded_file:
         for _, row in output_df.iterrows():
             package_value = str(row['package']).upper()
             location_value = str(row['location']).upper()
-            mapped_package = next((mapping.get(k) for k in mapping.keys() if k.upper() in package_value), None)
+            mapped_package = next((mapping_pivot.get(k) for k in mapping_pivot.keys() if k.upper() in package_value), None)
             if mapped_package is None and any(pkg.upper() in package_value for pkg in packages_pivot):
                 mapped_package = next(pkg for pkg in packages_pivot if pkg.upper() in package_value)
             if mapped_package in packages_pivot:
@@ -80,24 +80,99 @@ if uploaded_file:
 
         pivot_df = pivot_df.reindex(columns=['CITY WALK', 'INDEX', 'DKP'])
 
-        # Stage 4: Unique Patients with updated packages
-        packages_unique = ['Standard Package', 'Enhanced Package', 'Premium Package', 'Lipid Profile', 'Food Allergy', 'Food Intolerance', 'Respiratory Allergy', 'Female Hormone Profile', 'Mag & Zinc', 'Coeliac Profile Test', 'Active Package', 'Womens Comprehensive Health Screening', 'Healthy Heart Package', 'Right Fit', 'Athletes Package', 'NutriGen', 'UAE-National Pre-Employment Test', 'Age-Well', 'Acne Profile', 'Hair Loss', 'BCA', 'Pulmonary Function Test', 'Travel Fit Assessment', 'Movement Assessment', 'H&U Vaccination', 'Influenza Vaccination', 'Healthy Heart', 'Gym Partnership Package - Athlete Plus', 'GUT Health', 'OPC']
+        # Stage 4: Unique Patients with updated logic
+        packages_unique = [
+            'Standard Package',
+            'Enhanced Package',
+            'Premium Package',
+            'Lipid Profile',
+            'Food Allergy',
+            'Food Intolerance',
+            'Respiratory Allergy',
+            'Female Hormone Profile',
+            'Mag & Zinc',
+            'Coeliac Profile Test',
+            'Active Package',
+            'Athletes Package',
+            'BCA',
+            'Right Fit',
+            'ECG',
+            'Pulmonary Function Test',
+            'UAE-National Pre-Employment Test',
+            'Travel Fit Assessment',
+            'Movement Assessment',
+            'H&U Vaccination',
+            'Influenza Vaccination',
+            'Healthy Heart',
+            'Womens Comprehensive Health Screening',
+            'Gym Partnership Package - Athlete Plus',
+            'NutriGen',
+            'Age-Well',
+            'Acne Profile',
+            'Hair Loss',
+            'GUT Health',
+            'OPC'
+        ]
+
+        mapping_unique = {
+            "UAE National Pre-employment": "UAE-National Pre-Employment Test",
+            "Wellness Package - Premium": "Premium Package",
+            "Food Intolerance Test (Stand Alone)": "Food Intolerance",
+            "Food Intolerance Test (Add On)": "Food Intolerance",
+            "Respiratory Allergy Test (Add On)": "Respiratory Allergy",
+            "Body Composition Analysis Test": "BCA",
+            "Body Composition Analysis Test (Add On)": "BCA",
+            "ECG and Doctor Consult (Stand Alone)": "ECG",
+            "Wellness Package - Enhanced": "Enhanced Package",
+            "Wellness Package - Standard": "Standard Package",
+            "Lipid Profile Test (Add On with Wellness)": "Lipid Profile",
+            "Food Allergy Test (Add On)": "Food Allergy",
+            "Female Hormone Profile (Add On with Wellness)": "Female Hormone Profile",
+            "Smart DNA - Age Well Package": "Age-Well",
+            "Gut Health": "GUT Health",
+            "Healthy Heart Package": "Healthy Heart",
+            "Womens Comprehensive Health Screening": "Womens Comprehensive Health Screening",
+            "Athletes Package": "Athletes Package",
+            "Right Fit": "Right Fit",
+            "NutriGen": "NutriGen",
+            "Acne Profile": "Acne Profile",
+            "Hair Loss": "Hair Loss",
+            "Coeliac Profile Test": "Coeliac Profile Test",
+            "Active Package": "Active Package",
+            "Mag & Zinc": "Mag & Zinc",
+            "Pulmonary Function Test": "Pulmonary Function Test",
+            "Travel Fit Assessment": "Travel Fit Assessment",
+            "Movement Assessment": "Movement Assessment",
+            "H&U Vaccination": "H&U Vaccination",
+            "Influenza Vaccination": "Influenza Vaccination",
+            "Gym Partnership Package - Athlete Plus": "Gym Partnership Package - Athlete Plus",
+            "OPC": "OPC"
+        }
+
         unique_patients_pivot = pd.DataFrame(0, index=packages_unique + ['Unique Patients'], columns=locations)
 
         def match_package(service_name):
-            if not isinstance(service_name, str): return None
+            if not isinstance(service_name, str):
+                return None
             service_name = service_name.strip().upper()
-            for key, value in mapping.items():
-                if key.upper() == service_name: return value
-            for key, value in mapping.items():
-                if key.upper() in service_name: return value
+            # Try exact match from mapping
+            for key, value in mapping_unique.items():
+                if key.upper() == service_name:
+                    return value
+            # Try partial match
+            for key, value in mapping_unique.items():
+                if key.upper() in service_name:
+                    return value
+            # If no match found in mapping, check if service_name contains any package name
             for pkg in packages_unique:
-                if pkg.upper() in service_name: return pkg
+                if pkg.upper() in service_name:
+                    return pkg
             return None
 
         for _, row in output_df.iterrows():
             package_value = match_package(row['package'])
             location_value = str(row['location']).strip().upper()
+
             if package_value in packages_unique:
                 if 'CITY WALK' in location_value:
                     unique_patients_pivot.at[package_value, 'CITY WALK'] += 1
@@ -106,15 +181,16 @@ if uploaded_file:
                 elif 'INDEX TOWER' in location_value or 'INDEX' in location_value:
                     unique_patients_pivot.at[package_value, 'INDEX'] += 1
 
-        for loc in locations:
-            if loc == 'CITY WALK':
+        for location in locations:
+            if location == 'CITY WALK':
                 mask = output_df['location'].str.contains('CITY WALK', case=False, na=False)
-            elif loc == 'DKP':
+            elif location == 'DKP':
                 mask = output_df['location'].str.contains('DUBAI KNOWLEDGE PARK|DKP', case=False, na=False)
-            elif loc == 'INDEX':
+            elif location == 'INDEX':
                 mask = output_df['location'].str.contains('INDEX TOWER|INDEX', case=False, na=False)
+
             unique_count = output_df[mask]['name'].nunique()
-            unique_patients_pivot.at['Unique Patients', loc] = unique_count
+            unique_patients_pivot.at['Unique Patients', location] = unique_count
 
         unique_patients_pivot = unique_patients_pivot.reindex(columns=['CITY WALK', 'INDEX', 'DKP'])
 
