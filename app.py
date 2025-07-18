@@ -158,7 +158,7 @@ st.markdown(
         <div style="margin-top: 10px;">
             <sub>Made with ❤️ by Khaled Abdelhamid</sub><br>
             
-        </div>
+        
     </div>
     """,
     unsafe_allow_html=True
