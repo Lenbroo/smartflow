@@ -150,18 +150,6 @@ st.markdown("""
        
     </div>
 """, unsafe_allow_html=True)
-col1, col2, col3 = st.columns([1, 2, 1])
-
-with col2:
-    st.image("ss.png", width=120)
-st.markdown("""
-   
-    <br>
-    <div style='text-align: center; font-size: small;'>
-        <p>Made with ❤️ By Khaled Abdelhamid</p>
-       
-    </div>
-""", unsafe_allow_html=True)
 
 st.markdown(
     """
