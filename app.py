@@ -54,23 +54,23 @@ if uploaded_file:
 
         output_df['hrs'] = output_df['package'].apply(get_hours)
 
-        # Stage 3: Pivot tables with consistent packages
+        # Stage 3: Pivot tables (keep original packages)
         mapping = {"UAE National Pre-employment": "UAE-National Pre-Employment Test", "Wellness Package - Premium": "Premium Package", "Food Intolerance Test (Stand Alone)": "Food Intolerance", "Respiratory Allergy Test (Add On)": "Respiratory Allergy", "Body Composition Analysis Test (Add On)": "Body Composition Analysis Test (Add On)", "ECG and Doctor Consult (Stand Alone)": "ECG and Doctor Consult (Stand Alone)", "Wellness Package - Enhanced": "Enhanced Package", "Wellness Package - Standard": "Standard Package", "Lipid Profile Test (Add On with Wellness)": "Lipid Profile", "Food Allergy Test (Add On)": "Food Allergy", "Female Hormone Profile (Add On with Wellness)": "Female Hormone Profile", "Food Intolerance Test (Add On)": "Food Intolerance", "Smart DNA - Age Well Package": "Age-Well"}
-        packages = ['Standard Package', 'Enhanced Package', 'Premium Package', 'Lipid Profile', 'Food Allergy', 'Food Intolerance', 'Respiratory Allergy', 'Female Hormone Profile', 'Mag & Zinc', 'Coeliac Profile Test', 'Active Package', 'Womens Comprehensive Health Screening', 'Healthy Heart Package', 'Right Fit', 'Athletes Package', 'NutriGen', 'UAE-National Pre-Employment Test', 'Age-Well', 'Acne Profile', 'Hair Loss', 'BCA', 'Pulmonary Function Test', 'Travel Fit Assessment', 'Movement Assessment', 'H&U Vaccination', 'Influenza Vaccination', 'Healthy Heart', 'Gym Partnership Package - Athlete Plus', 'GUT Health', 'OPC']
+        packages_pivot = ['Standard Package', 'Enhanced Package', 'Premium Package', 'Lipid Profile', 'Food Allergy', 'Food Intolerance', 'Respiratory Allergy', 'Female Hormone Profile', 'Mag & Zinc', 'Coeliac Profile Test', 'Active Package', 'Womens Comprehensive Health Screening', 'Healthy Heart Package', 'Right Fit', 'Athletes Package', 'NutriGen', 'UAE-National Pre-Employment Test', 'Age-Well', 'Acne Profile', 'Hair Loss']
         locations = ['CITY WALK', 'DKP', 'INDEX']
 
         output_df['location'] = output_df['location'].str.strip().str.upper()
         output_df['package'] = output_df['package'].str.strip().str.upper()
 
-        pivot_df = pd.DataFrame(0, index=packages, columns=locations)
+        pivot_df = pd.DataFrame(0, index=packages_pivot, columns=locations)
 
         for _, row in output_df.iterrows():
             package_value = str(row['package']).upper()
             location_value = str(row['location']).upper()
             mapped_package = next((mapping.get(k) for k in mapping.keys() if k.upper() in package_value), None)
-            if mapped_package is None and any(pkg.upper() in package_value for pkg in packages):
-                mapped_package = next(pkg for pkg in packages if pkg.upper() in package_value)
-            if mapped_package in packages:
+            if mapped_package is None and any(pkg.upper() in package_value for pkg in packages_pivot):
+                mapped_package = next(pkg for pkg in packages_pivot if pkg.upper() in package_value)
+            if mapped_package in packages_pivot:
                 if 'CITY WALK' in location_value:
                     pivot_df.at[mapped_package, 'CITY WALK'] += 1
                 elif 'DUBAI KNOWLEDGE PARK' in location_value or 'DKP' in location_value:
@@ -80,8 +80,9 @@ if uploaded_file:
 
         pivot_df = pivot_df.reindex(columns=['CITY WALK', 'INDEX', 'DKP'])
 
-        # Stage 4: Unique Patients with consistent packages
-        unique_patients_pivot = pd.DataFrame(0, index=packages + ['Unique Patients'], columns=locations)
+        # Stage 4: Unique Patients with updated packages
+        packages_unique = ['Standard Package', 'Enhanced Package', 'Premium Package', 'Lipid Profile', 'Food Allergy', 'Food Intolerance', 'Respiratory Allergy', 'Female Hormone Profile', 'Mag & Zinc', 'Coeliac Profile Test', 'Active Package', 'Womens Comprehensive Health Screening', 'Healthy Heart Package', 'Right Fit', 'Athletes Package', 'NutriGen', 'UAE-National Pre-Employment Test', 'Age-Well', 'Acne Profile', 'Hair Loss', 'BCA', 'Pulmonary Function Test', 'Travel Fit Assessment', 'Movement Assessment', 'H&U Vaccination', 'Influenza Vaccination', 'Healthy Heart', 'Gym Partnership Package - Athlete Plus', 'GUT Health', 'OPC']
+        unique_patients_pivot = pd.DataFrame(0, index=packages_unique + ['Unique Patients'], columns=locations)
 
         def match_package(service_name):
             if not isinstance(service_name, str): return None
@@ -90,14 +91,14 @@ if uploaded_file:
                 if key.upper() == service_name: return value
             for key, value in mapping.items():
                 if key.upper() in service_name: return value
-            for pkg in packages:
+            for pkg in packages_unique:
                 if pkg.upper() in service_name: return pkg
             return None
 
         for _, row in output_df.iterrows():
             package_value = match_package(row['package'])
             location_value = str(row['location']).strip().upper()
-            if package_value in packages:
+            if package_value in packages_unique:
                 if 'CITY WALK' in location_value:
                     unique_patients_pivot.at[package_value, 'CITY WALK'] += 1
                 elif 'DUBAI KNOWLEDGE PARK' in location_value or 'DKP' in location_value:
