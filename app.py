@@ -162,3 +162,16 @@ st.markdown("""
        
     </div>
 """, unsafe_allow_html=True)
+
+st.markdown(
+    """
+    <div style="text-align: center;">
+        <img src="ss.png" width="100"/>
+        <div style="margin-top: 10px;">
+            <sub>Made with ❤️ by Khaled Abdelhamid</sub><br>
+            <sub>All rights reserved to Khaled Abdelhamid</sub>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
