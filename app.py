@@ -150,7 +150,7 @@ st.markdown("""
        
     </div>
 """, unsafe_allow_html=True)
-st.image("ss.png", width=40)
+st.image("ss.png", width=100)
 st.markdown("""
    
     <br>
